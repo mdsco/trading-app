@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Platform Trading App</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Trading Dashboard</h1>
+      <div class="service-selector">
+        <label for="service-select">Trading Service:</label>
+        <select id="service-select">
+          <option value="mock">Mock Trading (Demo)</option>
+          <option value="alpaca">Alpaca (Stocks)</option>
+          <option value="coinbase">Coinbase (Crypto)</option>
+          <option value="binance">Binance (Crypto)</option>
+          <option value="oanda">OANDA (Forex)</option>
+        </select>
+        <button id="refresh-btn" class="btn btn-secondary">Refresh Data</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Column: Account & Trading -->
+      <div class="left-column">
+        <!-- Account Overview -->
+        <section class="card account-section">
+          <h2>Account Overview</h2>
+          <div class="account-info">
+            <div class="account-item">
+              <span class="label">Balance:</span>
+              <span id="account-balance" class="value">$0.00</span>
+            </div>
+            <div class="account-item">
+              <span class="label">Equity:</span>
+              <span id="account-equity" class="value">$0.00</span>
+            </div>
+            <div class="account-item">
+              <span class="label">Buying Power:</span>
+              <span id="account-buying-power" class="value">$0.00</span>
+            </div>
+            <div class="account-item">
+              <span class="label">Service:</span>
+              <span id="account-service" class="value">-</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Trading Panel -->
+        <section class="card trading-section">
+          <h2>Place Order</h2>
+          <form id="order-form">
+            <div class="form-group">
+              <label for="symbol">Symbol:</label>
+              <input type="text" id="symbol" placeholder="e.g., AAPL, BTC-USD, EUR/USD" required>
+            </div>
+
+            <div class="form-group">
+              <label for="quantity">Quantity:</label>
+              <input type="number" id="quantity" placeholder="1" step="0.01" min="0.01" required>
+            </div>
+
+            <div class="form-group">
+              <label for="order-type">Order Type:</label>
+              <select id="order-type">
+                <option value="market">Market Order</option>
+                <option value="limit">Limit Order</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="limit-price-group" style="display: none;">
+              <label for="limit-price">Limit Price:</label>
+              <input type="number" id="limit-price" placeholder="0.00" step="0.01" min="0">
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="btn btn-buy" data-side="buy">Buy</button>
+              <button type="submit" class="btn btn-sell" data-side="sell">Sell</button>
+            </div>
+
+            <div id="current-price" class="current-price"></div>
+          </form>
+        </section>
+
+        <!-- Status Messages -->
+        <section class="card status-section">
+          <h2>Status</h2>
+          <div id="status-messages" class="status-messages"></div>
+        </section>
+      </div>
+
+      <!-- Right Column: Chart & Data -->
+      <div class="right-column">
+        <!-- Price Chart -->
+        <section class="card chart-section">
+          <h2>Price Chart</h2>
+          <div class="chart-controls">
+            <input type="text" id="chart-symbol" placeholder="Symbol (e.g., AAPL)">
+            <select id="chart-interval">
+              <option value="1m">1 Minute</option>
+              <option value="5m">5 Minutes</option>
+              <option value="15m">15 Minutes</option>
+              <option value="1h" selected>1 Hour</option>
+              <option value="4h">4 Hours</option>
+              <option value="1d">1 Day</option>
+            </select>
+            <button id="load-chart-btn" class="btn btn-primary">Load Chart</button>
+          </div>
+          <div class="chart-container">
+            <canvas id="price-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- Positions -->
+        <section class="card positions-section">
+          <h2>Positions</h2>
+          <div class="table-container">
+            <table id="positions-table">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Qty</th>
+                  <th>Side</th>
+                  <th>Entry</th>
+                  <th>Current</th>
+                  <th>P/L</th>
+                </tr>
+              </thead>
+              <tbody id="positions-body">
+                <tr>
+                  <td colspan="6" class="empty-message">No positions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Orders -->
+        <section class="card orders-section">
+          <h2>Order History</h2>
+          <div class="table-container">
+            <table id="orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Symbol</th>
+                  <th>Qty</th>
+                  <th>Side</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body">
+                <tr>
+                  <td colspan="8" class="empty-message">No orders</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="charts.js"></script>
+</body>
+</html>

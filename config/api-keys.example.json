@@ -1,0 +1,76 @@
+{
+  "comment": "This is an example configuration file. Copy this to api-keys.json and fill in your actual API credentials.",
+  "warning": "NEVER commit api-keys.json to version control! It contains sensitive credentials.",
+
+  "mock": {
+    "enabled": true,
+    "description": "Mock service requires no configuration - works out of the box for testing"
+  },
+
+  "alpaca": {
+    "enabled": false,
+    "description": "Alpaca Markets - Commission-free US stock trading",
+    "apiKey": "YOUR_ALPACA_API_KEY_HERE",
+    "apiSecret": "YOUR_ALPACA_API_SECRET_HERE",
+    "usePaper": true,
+    "notes": [
+      "Get API keys from: https://alpaca.markets/",
+      "usePaper: true = paper trading (recommended for testing)",
+      "usePaper: false = live trading with real money"
+    ]
+  },
+
+  "coinbase": {
+    "enabled": false,
+    "description": "Coinbase Advanced Trade - Cryptocurrency exchange",
+    "apiKey": "YOUR_COINBASE_API_KEY_HERE",
+    "apiSecret": "YOUR_COINBASE_API_SECRET_HERE",
+    "notes": [
+      "Get API keys from: https://www.coinbase.com/settings/api",
+      "Create keys with 'trade' permissions",
+      "Recommended: Start with small amounts for testing"
+    ]
+  },
+
+  "binance": {
+    "enabled": false,
+    "description": "Binance - Global cryptocurrency exchange",
+    "apiKey": "YOUR_BINANCE_API_KEY_HERE",
+    "apiSecret": "YOUR_BINANCE_API_SECRET_HERE",
+    "testnet": true,
+    "notes": [
+      "Get API keys from: https://www.binance.com/en/my/settings/api-management",
+      "testnet: true = testnet trading (recommended for testing)",
+      "testnet: false = live trading with real money",
+      "Testnet keys from: https://testnet.binance.vision/"
+    ]
+  },
+
+  "oanda": {
+    "enabled": false,
+    "description": "OANDA - Forex and CFD trading",
+    "apiKey": "YOUR_OANDA_API_TOKEN_HERE",
+    "accountId": "YOUR_OANDA_ACCOUNT_ID_HERE",
+    "useLive": false,
+    "notes": [
+      "Get API token from: https://www.oanda.com/account/tpa/personal_token",
+      "useLive: false = practice account (recommended for testing)",
+      "useLive: true = live trading with real money",
+      "Account ID format: XXX-XXX-XXXXXXXX-XXX"
+    ]
+  },
+
+  "configuration_instructions": {
+    "step1": "Copy this file to 'api-keys.json' in the same directory",
+    "step2": "Set 'enabled: true' for services you want to use",
+    "step3": "Replace placeholder values with your actual API credentials",
+    "step4": "IMPORTANT: Never commit api-keys.json to version control",
+    "step5": "The .gitignore file is already configured to ignore api-keys.json",
+    "security": [
+      "Keep your API keys secure and never share them",
+      "Use paper/test accounts before trading with real money",
+      "Review API key permissions - only grant what's necessary",
+      "Regularly rotate your API keys for security"
+    ]
+  }
+}
