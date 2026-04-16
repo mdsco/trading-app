@@ -10,9 +10,11 @@ const orderTypeSelect = document.getElementById('order-type');
 const limitPriceGroup = document.getElementById('limit-price-group');
 const symbolInput = document.getElementById('symbol');
 const currentPriceDiv = document.getElementById('current-price');
+const themeToggle = document.getElementById('theme-toggle');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   loadServiceConfig();
   setupEventListeners();
   refreshAllData();
@@ -24,11 +26,32 @@ function setupEventListeners() {
   refreshBtn.addEventListener('click', refreshAllData);
   orderTypeSelect.addEventListener('change', handleOrderTypeChange);
   symbolInput.addEventListener('blur', fetchCurrentPrice);
+  themeToggle.addEventListener('click', handleThemeToggle);
 
   // Handle order submission
   document.querySelectorAll('.btn-buy, .btn-sell').forEach(btn => {
     btn.addEventListener('click', handleOrderSubmit);
   });
+}
+
+// Theme / Dark Mode
+function initTheme() {
+  const saved = localStorage.getItem('theme_preference');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved !== null ? saved === 'dark' : prefersDark;
+  applyTheme(isDark);
+}
+
+function applyTheme(isDark) {
+  document.body.classList.toggle('dark-mode', isDark);
+  themeToggle.textContent = isDark ? '🌙' : '☀️';
+  themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+}
+
+function handleThemeToggle() {
+  const isDark = !document.body.classList.contains('dark-mode');
+  applyTheme(isDark);
+  localStorage.setItem('theme_preference', isDark ? 'dark' : 'light');
 }
 
 // Service Configuration
