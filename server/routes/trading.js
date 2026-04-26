@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 
 // Service factory
 const MockService = require('../services/MockService');
@@ -8,31 +9,53 @@ const CoinbaseService = require('../services/CoinbaseService');
 const BinanceService = require('../services/BinanceService');
 const OandaService = require('../services/OandaService');
 
+// Load out-of-band credentials from the user's ~/.config directory
+const { loadCredentials, CredentialsNotFoundError, InsecureKeyPermissionsError } = require('../../outofband_keys');
+let serverCredentials = {};
+try {
+  serverCredentials = loadCredentials({ appRoot: path.join(__dirname, '../..') });
+  const loaded = Object.keys(serverCredentials).filter(k => k !== 'mock');
+  if (loaded.length > 0) {
+    console.log(`[outofband_keys] Loaded server-side credentials for: ${loaded.join(', ')}`);
+  }
+} catch (err) {
+  if (err instanceof CredentialsNotFoundError) {
+    console.log('[outofband_keys] No credentials file found — credentials must be supplied by the client.');
+  } else if (err instanceof InsecureKeyPermissionsError) {
+    console.warn(`[outofband_keys] ${err.message}`);
+  } else {
+    console.warn('[outofband_keys] Failed to load credentials:', err.message);
+  }
+}
+
 // Store active service instances
 const services = {};
 
 /**
- * Initialize a trading service
+ * Initialize a trading service, merging any server-side credentials.
+ * Server-side credentials take precedence over client-supplied config.
  */
 function getService(serviceName, config) {
-  const key = `${serviceName}_${JSON.stringify(config)}`;
+  const serverCreds = serverCredentials[serviceName.toLowerCase()] || {};
+  const mergedConfig = { ...config, ...serverCreds };
+  const key = `${serviceName}_${JSON.stringify(mergedConfig)}`;
 
   if (!services[key]) {
     switch (serviceName.toLowerCase()) {
       case 'mock':
-        services[key] = new MockService(config);
+        services[key] = new MockService(mergedConfig);
         break;
       case 'alpaca':
-        services[key] = new AlpacaService(config);
+        services[key] = new AlpacaService(mergedConfig);
         break;
       case 'coinbase':
-        services[key] = new CoinbaseService(config);
+        services[key] = new CoinbaseService(mergedConfig);
         break;
       case 'binance':
-        services[key] = new BinanceService(config);
+        services[key] = new BinanceService(mergedConfig);
         break;
       case 'oanda':
-        services[key] = new OandaService(config);
+        services[key] = new OandaService(mergedConfig);
         break;
       default:
         throw new Error(`Unknown service: ${serviceName}`);
@@ -81,6 +104,21 @@ router.get('/services', (req, res) => {
       }
     ]
   });
+});
+
+/**
+ * GET /api/credentials
+ * Report which services have server-side credentials pre-loaded.
+ * Returns field names only — never the credential values.
+ */
+router.get('/credentials', (req, res) => {
+  const available = {};
+  for (const [service, creds] of Object.entries(serverCredentials)) {
+    if (creds && typeof creds === 'object') {
+      available[service] = Object.keys(creds);
+    }
+  }
+  res.json({ available });
 });
 
 /**

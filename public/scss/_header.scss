@@ -1,0 +1,38 @@
+.header {
+  background: var(--surface-primary);
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px var(--shadow-card);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  h1 {
+    color: var(--accent);
+    font-size: 28px;
+  }
+}
+
+.service-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  label {
+    font-weight: 600;
+  }
+
+  select {
+    padding: 8px 15px;
+    border: 2px solid var(--accent);
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+  }
+}

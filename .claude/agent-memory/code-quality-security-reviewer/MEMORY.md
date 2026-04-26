@@ -1,0 +1,1 @@
+- [Sass architecture and build setup](project_sass_architecture.md) — Sass partial structure, build scripts, compiled output location, and issues found in 2026-04-16 review

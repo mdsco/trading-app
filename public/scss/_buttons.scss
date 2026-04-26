@@ -1,0 +1,79 @@
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-btn-hover);
+  }
+
+  &-primary {
+    background: var(--accent);
+    color: white;
+
+    &:hover {
+      background: var(--accent-hover);
+    }
+  }
+
+  &-secondary {
+    background: var(--btn-secondary-bg);
+    color: white;
+
+    &:hover {
+      background: var(--btn-secondary-hover);
+    }
+  }
+
+  &-buy {
+    background: var(--success);
+    color: white;
+
+    &:hover {
+      background: var(--success-hover);
+    }
+  }
+
+  &-sell {
+    background: var(--danger);
+    color: white;
+
+    &:hover {
+      background: var(--danger-hover);
+    }
+  }
+
+  &-cancel {
+    background: var(--warning);
+    color: var(--btn-cancel-text);
+    padding: 5px 10px;
+    font-size: 12px;
+
+    &:hover {
+      background: var(--warning-hover);
+    }
+  }
+
+  &-theme-toggle {
+    background: transparent;
+    border: 2px solid var(--border-primary);
+    border-radius: 8px;
+    font-size: 18px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    line-height: 1.4;
+
+    &:hover {
+      border-color: var(--accent);
+      background: var(--surface-secondary);
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}

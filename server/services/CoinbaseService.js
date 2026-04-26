@@ -222,10 +222,11 @@ class CoinbaseService extends BaseService {
 
   async _request(method, endpoint, data = null, params = null) {
     const timestamp = Math.floor(Date.now() / 1000).toString();
-    const path = endpoint + (params ? '?' + new URLSearchParams(params).toString() : '');
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
+    const requestPath = '/api/v3/brokerage' + endpoint + queryString;
     const body = data ? JSON.stringify(data) : '';
 
-    const message = timestamp + method + path.replace('/api/v3/brokerage', '') + body;
+    const message = timestamp + method + requestPath + body;
     const signature = crypto.createHmac('sha256', this.apiSecret).update(message).digest('hex');
 
     const headers = {

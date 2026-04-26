@@ -1,6 +1,7 @@
 // Global state
 let currentService = 'mock';
 let serviceConfig = {};
+let serverAvailableCredentials = {};
 
 // DOM Elements
 const serviceSelect = document.getElementById('service-select');
@@ -13,8 +14,9 @@ const currentPriceDiv = document.getElementById('current-price');
 const themeToggle = document.getElementById('theme-toggle');
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
+  await fetchServerCredentials();
   loadServiceConfig();
   setupEventListeners();
   refreshAllData();
@@ -54,19 +56,37 @@ function handleThemeToggle() {
   localStorage.setItem('theme_preference', isDark ? 'dark' : 'light');
 }
 
+// Fetch which services have server-side credentials pre-loaded
+async function fetchServerCredentials() {
+  try {
+    const response = await fetch('/api/credentials');
+    const data = await response.json();
+    serverAvailableCredentials = data.available || {};
+  } catch (e) {
+    // If unavailable, fall back to localStorage / prompting
+  }
+}
+
 // Service Configuration
 function loadServiceConfig() {
   currentService = serviceSelect.value;
 
-  // Load config from localStorage or use empty config for mock
-  const savedConfig = localStorage.getItem(`config_${currentService}`);
-
   if (currentService === 'mock') {
     serviceConfig = {};
-  } else if (savedConfig) {
+    return;
+  }
+
+  // Server has credentials for this service — no client config needed
+  if (serverAvailableCredentials[currentService]) {
+    serviceConfig = {};
+    return;
+  }
+
+  // Fall back to localStorage or prompt
+  const savedConfig = localStorage.getItem(`config_${currentService}`);
+  if (savedConfig) {
     serviceConfig = JSON.parse(savedConfig);
   } else {
-    // Prompt for API keys if not configured
     promptForConfig();
   }
 }
@@ -253,7 +273,7 @@ async function fetchCurrentPrice() {
 
   try {
     const price = await apiCall('/price', { symbol });
-    currentPriceDiv.textContent = `Current Price: $${price.price} (Bid: $${price.bid} / Ask: $${price.ask})`;
+    currentPriceDiv.textContent = `Current Price for ${symbol}: $${price.price} (Bid: $${price.bid} / Ask: $${price.ask})`;
   } catch (error) {
     currentPriceDiv.textContent = `Could not fetch price: ${error.message}`;
   }

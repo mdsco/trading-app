@@ -1,0 +1,29 @@
+.status-messages {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.status-message {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.status-success {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-left: 4px solid var(--success);
+}
+
+.status-error {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-left: 4px solid var(--danger);
+}
+
+.status-info {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border-left: 4px solid var(--info);
+}

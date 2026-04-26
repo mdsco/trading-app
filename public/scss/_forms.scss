@@ -1,0 +1,43 @@
+.form-group {
+  margin-bottom: 15px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--border-primary);
+    border-radius: 5px;
+    font-size: 14px;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+  }
+}
+
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.current-price {
+  margin-top: 15px;
+  padding: 10px;
+  background: var(--surface-accent-bg);
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--accent);
+}

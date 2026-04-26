@@ -1,0 +1,81 @@
+// Light theme tokens
+:root {
+  --body-bg-start:       #667eea;
+  --body-bg-end:         #764ba2;
+  --surface-primary:     #ffffff;
+  --surface-secondary:   #f8f9fa;
+  --surface-tertiary:    #f0f0f0;
+  --surface-accent-bg:   #f0f7ff;
+  --border-primary:      #e0e0e0;
+  --border-table:        #dee2e6;
+  --border-card-section: #f0f0f0;
+  --text-primary:        #333333;
+  --text-secondary:      #555555;
+  --text-muted:          #666666;
+  --text-faint:          #999999;
+  --accent:              #667eea;
+  --accent-hover:        #5568d3;
+  --success:             #28a745;
+  --success-hover:       #218838;
+  --success-bg:          #d4edda;
+  --success-text:        #155724;
+  --danger:              #dc3545;
+  --danger-hover:        #c82333;
+  --danger-bg:           #f8d7da;
+  --danger-text:         #721c24;
+  --warning:             #ffc107;
+  --warning-hover:       #e0a800;
+  --warning-text:        #333333;
+  --info:                #17a2b8;
+  --info-bg:             #d1ecf1;
+  --info-text:           #0c5460;
+  --btn-secondary-bg:    #6c757d;
+  --btn-secondary-hover: #5a6268;
+  --btn-cancel-text:     #333333;
+  --status-filled:       #28a745;
+  --status-pending:      #ffc107;
+  --status-cancelled:    #6c757d;
+  --shadow-card:         rgba(0, 0, 0, 0.10);
+  --shadow-btn-hover:    rgba(0, 0, 0, 0.20);
+}
+
+// Dark theme overrides
+body.dark-mode {
+  --body-bg-start:       #1a1a2e;
+  --body-bg-end:         #16213e;
+  --surface-primary:     #1e2a3a;
+  --surface-secondary:   #243347;
+  --surface-tertiary:    #2c3e55;
+  --surface-accent-bg:   #1f2d42;
+  --border-primary:      #2e4060;
+  --border-table:        #2e4060;
+  --border-card-section: #2e4060;
+  --text-primary:        #e8eaf0;
+  --text-secondary:      #b0b8cc;
+  --text-muted:          #8896b0;
+  --text-faint:          #5c6e8a;
+  --accent:              #667eea;
+  --accent-hover:        #7b8ff5;
+  --success:             #34c759;
+  --success-hover:       #28a745;
+  --success-bg:          #0d2e1a;
+  --success-text:        #6ee68a;
+  --danger:              #ff453a;
+  --danger-hover:        #dc3545;
+  --danger-bg:           #2e0d10;
+  --danger-text:         #ff8a84;
+  --warning:             #ffd60a;
+  --warning-hover:       #ffc107;
+  --warning-text:        #1a1a2e;
+  --info:                #32ade6;
+  --info-bg:             #0a2233;
+  --info-text:           #7dd4f8;
+  --btn-secondary-bg:    #3a4a5c;
+  --btn-secondary-hover: #4a5a6e;
+  --btn-cancel-text:     #e8eaf0;
+  --status-filled:       #34c759;
+  --status-pending:      #ffd60a;
+  --status-cancelled:    #8896b0;
+  --shadow-card:         rgba(0, 0, 0, 0.40);
+  --shadow-btn-hover:    rgba(0, 0, 0, 0.50);
+}

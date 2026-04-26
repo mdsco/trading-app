@@ -5,7 +5,9 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "dev": "node server/server.js"
+    "sass": "sass public/scss/main.scss public/styles.css",
+    "sass:watch": "sass --watch public/scss/main.scss public/styles.css",
+    "dev": "concurrently \"node server/server.js\" \"npm run sass:watch\""
   },
   "keywords": [
     "trading",
@@ -20,10 +22,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "axios": "^1.6.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "js-yaml": "^4.1.1",
     "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "sass": "^1.99.0"
   }
 }

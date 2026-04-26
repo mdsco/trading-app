@@ -1,0 +1,22 @@
+.account-info {
+  display: grid;
+  gap: 12px;
+}
+
+.account-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: var(--surface-secondary);
+  border-radius: 5px;
+
+  .label {
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .value {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}

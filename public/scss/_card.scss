@@ -1,0 +1,14 @@
+.card {
+  background: var(--surface-primary);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px var(--shadow-card);
+
+  h2 {
+    color: var(--accent);
+    font-size: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-card-section);
+  }
+}
