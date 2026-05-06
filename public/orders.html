@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History — Trading App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title-group">
+        <h1>Order History</h1>
+        <a href="/" class="header-nav-link">← Dashboard</a>
+      </div>
+      <div class="service-selector">
+        <label for="service-select">Trading Service:</label>
+        <select id="service-select">
+          <option value="mock">Mock Trading (Demo)</option>
+          <option value="alpaca">Alpaca (Stocks)</option>
+          <option value="coinbase">Coinbase (Crypto)</option>
+          <option value="binance">Binance (Crypto)</option>
+          <option value="oanda">OANDA (Forex)</option>
+        </select>
+        <button id="refresh-btn" class="btn btn-secondary">Refresh</button>
+        <button id="theme-toggle" class="btn btn-theme-toggle" aria-label="Switch to dark mode">☀️</button>
+      </div>
+    </header>
+
+    <!-- Orders Table -->
+    <section class="card orders-section">
+      <h2>Orders</h2>
+      <div class="table-container">
+        <table id="orders-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Symbol</th>
+              <th>Qty</th>
+              <th>Side</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr>
+              <td colspan="9" class="empty-message">No orders</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Status Messages -->
+    <section class="card status-section" style="margin-top: 20px;">
+      <h2>Status</h2>
+      <div id="status-messages" class="status-messages"></div>
+    </section>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="orders.js"></script>
+</body>
+</html>

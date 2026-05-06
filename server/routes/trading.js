@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const { logError } = require('../logger');
 
 // Service factory
 const MockService = require('../services/MockService');
@@ -65,6 +66,10 @@ function getService(serviceName, config) {
   return services[key];
 }
 
+function asyncHandler(fn) {
+  return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+}
+
 /**
  * GET /api/services
  * Get list of available trading services
@@ -125,120 +130,94 @@ router.get('/credentials', (req, res) => {
  * POST /api/account
  * Get account information
  */
-router.post('/account', async (req, res) => {
-  try {
-    const { service, config } = req.body;
-    const tradingService = getService(service, config);
-    const account = await tradingService.getAccount();
-    res.json(account);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/account', asyncHandler(async (req, res) => {
+  const { service, config } = req.body;
+  const tradingService = getService(service, config);
+  const account = await tradingService.getAccount();
+  res.json(account);
+}));
 
 /**
  * POST /api/positions
  * Get current positions
  */
-router.post('/positions', async (req, res) => {
-  try {
-    const { service, config } = req.body;
-    const tradingService = getService(service, config);
-    const positions = await tradingService.getPositions();
-    res.json({ positions });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/positions', asyncHandler(async (req, res) => {
+  const { service, config } = req.body;
+  const tradingService = getService(service, config);
+  const positions = await tradingService.getPositions();
+  res.json({ positions });
+}));
 
 /**
  * POST /api/orders
  * Get order history
  */
-router.post('/orders', async (req, res) => {
-  try {
-    const { service, config } = req.body;
-    const tradingService = getService(service, config);
-    const orders = await tradingService.getOrders();
-    res.json({ orders });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/orders', asyncHandler(async (req, res) => {
+  const { service, config } = req.body;
+  const tradingService = getService(service, config);
+  const orders = await tradingService.getOrders();
+  res.json({ orders });
+}));
 
 /**
  * POST /api/order/market
  * Place a market order
  */
-router.post('/order/market', async (req, res) => {
-  try {
-    const { service, config, symbol, quantity, side } = req.body;
-    const tradingService = getService(service, config);
-    const result = await tradingService.placeMarketOrder(symbol, quantity, side);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/order/market', asyncHandler(async (req, res) => {
+  const { service, config, symbol, quantity, side } = req.body;
+  const tradingService = getService(service, config);
+  const result = await tradingService.placeMarketOrder(symbol, quantity, side);
+  res.json(result);
+}));
 
 /**
  * POST /api/order/limit
  * Place a limit order
  */
-router.post('/order/limit', async (req, res) => {
-  try {
-    const { service, config, symbol, quantity, side, limitPrice } = req.body;
-    const tradingService = getService(service, config);
-    const result = await tradingService.placeLimitOrder(symbol, quantity, side, limitPrice);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/order/limit', asyncHandler(async (req, res) => {
+  const { service, config, symbol, quantity, side, limitPrice } = req.body;
+  const tradingService = getService(service, config);
+  const result = await tradingService.placeLimitOrder(symbol, quantity, side, limitPrice);
+  res.json(result);
+}));
 
 /**
  * POST /api/order/cancel
  * Cancel an order
  */
-router.post('/order/cancel', async (req, res) => {
-  try {
-    const { service, config, orderId } = req.body;
-    const tradingService = getService(service, config);
-    const result = await tradingService.cancelOrder(orderId);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/order/cancel', asyncHandler(async (req, res) => {
+  const { service, config, orderId } = req.body;
+  const tradingService = getService(service, config);
+  const result = await tradingService.cancelOrder(orderId);
+  res.json(result);
+}));
 
 /**
  * POST /api/price
  * Get current price for a symbol
  */
-router.post('/price', async (req, res) => {
-  try {
-    const { service, config, symbol } = req.body;
-    const tradingService = getService(service, config);
-    const price = await tradingService.getPrice(symbol);
-    res.json(price);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/price', asyncHandler(async (req, res) => {
+  const { service, config, symbol } = req.body;
+  const tradingService = getService(service, config);
+  const price = await tradingService.getPrice(symbol);
+  res.json(price);
+}));
 
 /**
  * POST /api/historical
  * Get historical price data
  */
-router.post('/historical', async (req, res) => {
-  try {
-    const { service, config, symbol, interval, limit } = req.body;
-    const tradingService = getService(service, config);
-    const data = await tradingService.getHistoricalData(symbol, interval, limit);
-    res.json({ data });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+router.post('/historical', asyncHandler(async (req, res) => {
+  const { service, config, symbol, interval, limit } = req.body;
+  const tradingService = getService(service, config);
+  const data = await tradingService.getHistoricalData(symbol, interval, limit);
+  res.json({ data });
+}));
+
+// Centralized error handler for all trading routes
+router.use((err, req, res, next) => {
+  logError(`${req.method} /api${req.path}`, req.body?.service, err);
+  res.status(500).json({ error: err.message });
 });
 
 module.exports = router;

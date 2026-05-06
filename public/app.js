@@ -1,8 +1,3 @@
-// Global state
-let currentService = 'mock';
-let serviceConfig = {};
-let serverAvailableCredentials = {};
-
 // DOM Elements
 const serviceSelect = document.getElementById('service-select');
 const refreshBtn = document.getElementById('refresh-btn');
@@ -36,109 +31,6 @@ function setupEventListeners() {
   });
 }
 
-// Theme / Dark Mode
-function initTheme() {
-  const saved = localStorage.getItem('theme_preference');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = saved !== null ? saved === 'dark' : prefersDark;
-  applyTheme(isDark);
-}
-
-function applyTheme(isDark) {
-  document.body.classList.toggle('dark-mode', isDark);
-  themeToggle.textContent = isDark ? '🌙' : '☀️';
-  themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-}
-
-function handleThemeToggle() {
-  const isDark = !document.body.classList.contains('dark-mode');
-  applyTheme(isDark);
-  localStorage.setItem('theme_preference', isDark ? 'dark' : 'light');
-}
-
-// Fetch which services have server-side credentials pre-loaded
-async function fetchServerCredentials() {
-  try {
-    const response = await fetch('/api/credentials');
-    const data = await response.json();
-    serverAvailableCredentials = data.available || {};
-  } catch (e) {
-    // If unavailable, fall back to localStorage / prompting
-  }
-}
-
-// Service Configuration
-function loadServiceConfig() {
-  currentService = serviceSelect.value;
-
-  if (currentService === 'mock') {
-    serviceConfig = {};
-    return;
-  }
-
-  // Server has credentials for this service — no client config needed
-  if (serverAvailableCredentials[currentService]) {
-    serviceConfig = {};
-    return;
-  }
-
-  // Fall back to localStorage or prompt
-  const savedConfig = localStorage.getItem(`config_${currentService}`);
-  if (savedConfig) {
-    serviceConfig = JSON.parse(savedConfig);
-  } else {
-    promptForConfig();
-  }
-}
-
-function promptForConfig() {
-  const configs = {
-    alpaca: {
-      apiKey: 'Enter Alpaca API Key',
-      apiSecret: 'Enter Alpaca API Secret',
-      usePaper: true
-    },
-    coinbase: {
-      apiKey: 'Enter Coinbase API Key',
-      apiSecret: 'Enter Coinbase API Secret'
-    },
-    binance: {
-      apiKey: 'Enter Binance API Key',
-      apiSecret: 'Enter Binance API Secret',
-      testnet: true
-    },
-    oanda: {
-      apiKey: 'Enter OANDA API Key',
-      accountId: 'Enter OANDA Account ID',
-      useLive: false
-    }
-  };
-
-  const requiredConfig = configs[currentService];
-  if (!requiredConfig) return;
-
-  const configValues = {};
-  for (const [key, prompt] of Object.entries(requiredConfig)) {
-    if (typeof prompt === 'boolean') {
-      configValues[key] = prompt;
-    } else {
-      const value = window.prompt(prompt);
-      if (!value) {
-        showStatus('Configuration cancelled. Using Mock service.', 'info');
-        serviceSelect.value = 'mock';
-        currentService = 'mock';
-        serviceConfig = {};
-        return;
-      }
-      configValues[key] = value;
-    }
-  }
-
-  serviceConfig = configValues;
-  localStorage.setItem(`config_${currentService}`, JSON.stringify(serviceConfig));
-  showStatus(`${currentService} configured successfully!`, 'success');
-}
-
 function handleServiceChange() {
   loadServiceConfig();
   refreshAllData();
@@ -148,31 +40,6 @@ function handleOrderTypeChange() {
   limitPriceGroup.style.display = orderTypeSelect.value === 'limit' ? 'block' : 'none';
 }
 
-// API Calls
-async function apiCall(endpoint, data = {}) {
-  try {
-    const response = await fetch(`/api${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service: currentService,
-        config: serviceConfig,
-        ...data
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || 'API request failed');
-    }
-
-    return result;
-  } catch (error) {
-    throw error;
-  }
-}
-
 // Refresh All Data
 async function refreshAllData() {
   showStatus('Refreshing data...', 'info');
@@ -180,8 +47,7 @@ async function refreshAllData() {
   try {
     await Promise.all([
       fetchAccountData(),
-      fetchPositions(),
-      fetchOrders()
+      fetchPositions()
     ]);
     showStatus('Data refreshed successfully', 'success');
   } catch (error) {
@@ -228,38 +94,6 @@ async function fetchPositions() {
     `).join('');
   } catch (error) {
     showStatus(`Error fetching positions: ${error.message}`, 'error');
-  }
-}
-
-// Fetch Orders
-async function fetchOrders() {
-  try {
-    const result = await apiCall('/orders');
-    const tbody = document.getElementById('orders-body');
-
-    if (!result.orders || result.orders.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="empty-message">No orders</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = result.orders.map(order => `
-      <tr>
-        <td>${order.id.substring(0, 8)}...</td>
-        <td>${order.symbol}</td>
-        <td>${order.quantity}</td>
-        <td>${order.side}</td>
-        <td>${order.type}</td>
-        <td class="status-${order.status}">${order.status}</td>
-        <td>$${order.filledPrice || order.limitPrice || '-'}</td>
-        <td>
-          ${order.status === 'pending' ?
-            `<button class="btn btn-cancel" onclick="cancelOrder('${order.id}')">Cancel</button>` :
-            '-'}
-        </td>
-      </tr>
-    `).join('');
-  } catch (error) {
-    showStatus(`Error fetching orders: ${error.message}`, 'error');
   }
 }
 
@@ -329,36 +163,3 @@ async function handleOrderSubmit(e) {
   }
 }
 
-// Cancel Order
-async function cancelOrder(orderId) {
-  if (!confirm('Are you sure you want to cancel this order?')) {
-    return;
-  }
-
-  try {
-    showStatus(`Cancelling order ${orderId}...`, 'info');
-    const result = await apiCall('/order/cancel', { orderId });
-
-    if (result.success) {
-      showStatus('Order cancelled successfully', 'success');
-      fetchOrders();
-    }
-  } catch (error) {
-    showStatus(`Error cancelling order: ${error.message}`, 'error');
-  }
-}
-
-// Status Messages
-function showStatus(message, type = 'info') {
-  const statusDiv = document.getElementById('status-messages');
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `status-message status-${type}`;
-  messageDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-
-  statusDiv.insertBefore(messageDiv, statusDiv.firstChild);
-
-  // Keep only last 10 messages
-  while (statusDiv.children.length > 10) {
-    statusDiv.removeChild(statusDiv.lastChild);
-  }
-}

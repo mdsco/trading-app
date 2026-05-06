@@ -1,6 +1,7 @@
 const BaseService = require('./BaseService');
 const axios = require('axios');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 /**
  * Coinbase Advanced Trade Service
@@ -221,18 +222,28 @@ class CoinbaseService extends BaseService {
   }
 
   async _request(method, endpoint, data = null, params = null) {
-    const timestamp = Math.floor(Date.now() / 1000).toString();
     const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
-    const requestPath = '/api/v3/brokerage' + endpoint + queryString;
-    const body = data ? JSON.stringify(data) : '';
+    const now = Math.floor(Date.now() / 1000);
+    const nonce = crypto.randomBytes(16).toString('hex');
 
-    const message = timestamp + method + requestPath + body;
-    const signature = crypto.createHmac('sha256', this.apiSecret).update(message).digest('hex');
+    // CDP JWT authentication — required since Coinbase shut down legacy HMAC keys
+    const token = jwt.sign(
+      {
+        sub: this.apiKey,
+        iss: 'cdp',
+        nbf: now,
+        exp: now + 120,
+        uri: `${method} api.coinbase.com/api/v3/brokerage${endpoint}`
+      },
+      this.apiSecret,
+      {
+        algorithm: 'ES256',
+        header: { alg: 'ES256', kid: this.apiKey, nonce }
+      }
+    );
 
     const headers = {
-      'CB-ACCESS-KEY': this.apiKey,
-      'CB-ACCESS-SIGN': signature,
-      'CB-ACCESS-TIMESTAMP': timestamp,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
 
@@ -265,7 +276,8 @@ class CoinbaseService extends BaseService {
       '15m': 'FIFTEEN_MINUTE',
       '1h': 'ONE_HOUR',
       '6h': 'SIX_HOUR',
-      '1d': 'ONE_DAY'
+      '1d': 'ONE_DAY',
+      '1w': 'ONE_WEEK'
     };
     return map[interval] || 'ONE_HOUR';
   }
@@ -277,7 +289,8 @@ class CoinbaseService extends BaseService {
     const seconds = {
       'm': 60,
       'h': 3600,
-      'd': 86400
+      'd': 86400,
+      'w': 604800
     };
 
     return (seconds[unit] || seconds['h']) * value;

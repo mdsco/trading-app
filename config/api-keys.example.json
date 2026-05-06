@@ -23,10 +23,13 @@
   "coinbase": {
     "enabled": false,
     "description": "Coinbase Advanced Trade - Cryptocurrency exchange",
-    "apiKey": "YOUR_COINBASE_API_KEY_HERE",
-    "apiSecret": "YOUR_COINBASE_API_SECRET_HERE",
+    "apiKey": "YOUR_COINBASE_CDP_KEY_NAME_HERE",
+    "apiSecret": "-----BEGIN EC PRIVATE KEY-----\nYOUR_EC_PRIVATE_KEY_HERE\n-----END EC PRIVATE KEY-----\n",
     "notes": [
-      "Get API keys from: https://www.coinbase.com/settings/api",
+      "Coinbase now requires CDP (Cloud Developer Platform) API keys — legacy HMAC keys no longer work.",
+      "Get CDP API keys from: https://portal.cdp.coinbase.com/",
+      "apiKey: the full key name, e.g. 'organizations/abc123/apiKeys/xyz456'",
+      "apiSecret: the EC private key in PEM format (copy the full -----BEGIN EC PRIVATE KEY----- block)",
       "Create keys with 'trade' permissions",
       "Recommended: Start with small amounts for testing"
     ]

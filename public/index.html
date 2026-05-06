@@ -11,7 +11,10 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <h1>Trading Dashboard</h1>
+      <div class="header-title-group">
+        <h1>Trading Dashboard</h1>
+        <a href="/orders.html" class="header-nav-link">Order History</a>
+      </div>
       <div class="service-selector">
         <label for="service-select">Trading Service:</label>
         <select id="service-select">
@@ -110,6 +113,7 @@
               <option value="1h" selected>1 Hour</option>
               <option value="4h">4 Hours</option>
               <option value="1d">1 Day</option>
+              <option value="1w">1 Week</option>
             </select>
             <button id="load-chart-btn" class="btn btn-primary">Load Chart</button>
           </div>
@@ -142,35 +146,11 @@
           </div>
         </section>
 
-        <!-- Orders -->
-        <section class="card orders-section">
-          <h2>Order History</h2>
-          <div class="table-container">
-            <table id="orders-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Symbol</th>
-                  <th>Qty</th>
-                  <th>Side</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Price</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="orders-body">
-                <tr>
-                  <td colspan="8" class="empty-message">No orders</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
       </div>
     </div>
   </div>
 
+  <script src="shared.js"></script>
   <script src="app.js"></script>
   <script src="charts.js"></script>
 </body>
